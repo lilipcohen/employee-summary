@@ -1,6 +1,6 @@
-// const Manager = require("./lib/Manager");
+const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
-// const Intern = require("./lib/Intern");
+const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
@@ -51,8 +51,12 @@ const questions = ([
 
 const employees = [];
 inquirer.prompt(questions).then((answers) => {
-    const e = new Engineer(answers.name, answers.github, "test@test.com", answers.email);
+    const e = new Engineer(answers.name, answers.github, answers.id, answers.email);
+    const i = new Intern(answers.name, answers.school, answers.id, answers.email);
+    const m = new Manager(answers.name, answers.officeNumber, answers.id, answers.email);
     employees.push(e);
+    employees.push(i);
+    employees.push(m);
     render(employees);
     writeToFile("Team-Summary", render(employees))
 })
@@ -63,7 +67,7 @@ function writeToFile(fileName, data) {
 
 // 1) ask user questions
 // 2) from answers determine what kind of employee they want to create
-// 3) use matching contructor to create that emplyee
+// 3) use matching contructor to create that employee
 // 4) add new employee object to an array
 // 5) ask user if they want to create another one or finished
 // 6) if not finished repeat steps 1 through 5 (call function handles asking questions if do if not call function to write to file)
