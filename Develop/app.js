@@ -46,28 +46,14 @@ const questions = ([
     {type: 'input',
       message: 'Enter your ID:',
       name: 'id',
+    },
+    {
+        type: 'list',
+        message: 'Would you like to add another employee?',
+        choices: ["yes", "no"],
+        name: 'more',
     }
 ]);
-
-function continueQuestion() {
-    const addMore = ([
-        {
-            type: 'list',
-            message: 'Would you like to add another employee?',
-            choices: ["yes", "no"],
-            name: 'more',
-        }
-    ]);
-    inquirer.prompt(addMore).then((answer) => {
-        if (answer.more === "yes") {
-            inquirer.prompt(questions);
-        }
-        else {
-            render(employees);
-            writeToFile("Team-Summary", render(employees))
-        }
-    });
-};
 
 const employees = [];
 inquirer.prompt(questions).then((answers) => {
@@ -80,8 +66,13 @@ inquirer.prompt(questions).then((answers) => {
     } else if (answers.role === "manager") {
         const m = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
         employees.push(m);
+    } else {
+        console.log("must pick one!")
     }
-    continueQuestion();
+    while (answers.more === "yes") {
+        inquirer.prompt(questions)
+        break;
+    }
     render(employees);
     writeToFile("Team-Summary", render(employees))
 });
