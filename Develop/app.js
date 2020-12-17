@@ -49,21 +49,42 @@ const questions = ([
     }
 ]);
 
+function continueQuestion() {
+    const addMore = ([
+        {
+            type: 'list',
+            message: 'Would you like to add another employee?',
+            choices: ["yes", "no"],
+            name: 'more',
+        }
+    ]);
+    inquirer.prompt(addMore).then((answer) => {
+        if (answer.more === "yes") {
+            inquirer.prompt(questions);
+        }
+        else {
+            render(employees);
+            writeToFile("Team-Summary", render(employees))
+        }
+    });
+};
+
 const employees = [];
 inquirer.prompt(questions).then((answers) => {
-    if (answers.role === "intern"){
-        const i = new Intern(answers.name, answers.school, answers.id, answers.email);
+    if (answers.role === "intern") {
+        const i = new Intern(answers.name, answers.id, answers.email, answers.school);
         employees.push(i);
     } else if (answers.role === "engineer") {
-        const e = new Engineer(answers.name, answers.github, answers.id, answers.email);
+        const e = new Engineer(answers.name, answers.id, answers.email, answers.github);
         employees.push(e);
     } else if (answers.role === "manager") {
-        const m = new Manager(answers.name, answers.officeNumber, answers.id, answers.email);
+        const m = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
         employees.push(m);
-    } 
+    }
+    continueQuestion();
     render(employees);
     writeToFile("Team-Summary", render(employees))
-})
+});
 
 function writeToFile(fileName, data) {
     fs.writeFileSync(`output-${fileName}.html`, data);
