@@ -51,12 +51,16 @@ const questions = ([
 
 const employees = [];
 inquirer.prompt(questions).then((answers) => {
-    const e = new Engineer(answers.name, answers.github, answers.id, answers.email);
-    const i = new Intern(answers.name, answers.school, answers.id, answers.email);
-    const m = new Manager(answers.name, answers.officeNumber, answers.id, answers.email);
-    employees.push(e);
-    employees.push(i);
-    employees.push(m);
+    if (answers.role === "intern"){
+        const i = new Intern(answers.name, answers.school, answers.id, answers.email);
+        employees.push(i);
+    } else if (answers.role === "engineer") {
+        const e = new Engineer(answers.name, answers.github, answers.id, answers.email);
+        employees.push(e);
+    } else if (answers.role === "manager") {
+        const m = new Manager(answers.name, answers.officeNumber, answers.id, answers.email);
+        employees.push(m);
+    } 
     render(employees);
     writeToFile("Team-Summary", render(employees))
 })
