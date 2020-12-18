@@ -56,26 +56,30 @@ const questions = ([
 ]);
 
 const employees = [];
-inquirer.prompt(questions).then((answers) => {
-    if (answers.role === "intern") {
-        const i = new Intern(answers.name, answers.id, answers.email, answers.school);
-        employees.push(i);
-    } else if (answers.role === "engineer") {
-        const e = new Engineer(answers.name, answers.id, answers.email, answers.github);
-        employees.push(e);
-    } else if (answers.role === "manager") {
-        const m = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
-        employees.push(m);
-    } else {
-        console.log("must pick one!")
-    }
-    while (answers.more === "yes") {
-        inquirer.prompt(questions)
-        break;
-    }
-    render(employees);
-    writeToFile("Team-Summary", render(employees))
-});
+function buildTeamList() {
+    inquirer.prompt(questions).then((answers) => {
+        if (answers.role === "intern") {
+            const i = new Intern(answers.name, answers.id, answers.email, answers.school);
+            employees.push(i);
+        } else if (answers.role === "engineer") {
+            const e = new Engineer(answers.name, answers.id, answers.email, answers.github);
+            employees.push(e);
+        } else if (answers.role === "manager") {
+            const m = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
+            employees.push(m);
+        } else {
+            console.log("must pick one!")
+        }
+        if (answers.more === "yes") {
+            buildTeamList();
+        } else {
+            render(employees);
+            writeToFile("Team-Summary", render(employees));
+        }
+    });
+}
+
+buildTeamList();
 
 function writeToFile(fileName, data) {
     fs.writeFileSync(`output-${fileName}.html`, data);
